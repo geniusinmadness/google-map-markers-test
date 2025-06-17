@@ -198,6 +198,8 @@ function initMap(containerId) {
   window.HtmlMarker = HtmlMarker;
 
   showGroupMarkers(data);
+  renderGroupButtons(data);
+
 }
 
 function clearMarkers() {
@@ -259,5 +261,36 @@ function showItemMarkers(data, groupId) {
     });
 
     markers.push(marker);
+  });
+}
+
+function renderGroupButtons(data) {
+  const container = document.getElementById('group-buttons');
+  if (!container) return;
+
+  container.innerHTML = ''; // Clear any existing buttons
+
+  // "Show All" button
+  const allBtn = document.createElement('button');
+  allBtn.innerText = 'Rodyti visus';
+  allBtn.onclick = () => {
+    showGroupMarkers(data);
+    map.setZoom(7);
+    map.setCenter({ lat: 55.360307, lng: 24.095800 });
+  };
+  container.appendChild(allBtn);
+
+  // One button per group
+  data.groups.forEach(group => {
+    const btn = document.createElement('button');
+    btn.innerText = group.title;
+    btn.style.marginLeft = '6px';
+    btn.onclick = () => {
+      const position = new google.maps.LatLng(group.lat, group.lng);
+      map.setZoom(12);
+      map.panTo(position);
+      showItemMarkers(data, group.id);
+    };
+    container.appendChild(btn);
   });
 }
